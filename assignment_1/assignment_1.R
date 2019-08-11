@@ -119,7 +119,7 @@ draw_ellipse <- function(df, significance){
   # Calc stats
   dbar <- colMeans(df)
   sd <- cov(df)
-  crit <- ((n-1)*p/(n-p))*qf(1-significance,p,n-p)
+  crit <- ((n-1)*p/(n*(n-p)))*qf(1-significance,p,n-p)
   
   #Setup region
   x_min <- min(df[,1])
@@ -161,7 +161,7 @@ draw_ellipse <- function(df, significance){
 
 paired_diff <- convert_to_paired_diff(table_6_1)
 d <- paired_diff$d
-significance <- 0.2
+significance <- 0.05
 
 draw_ellipse(d, significance)
 
@@ -215,4 +215,8 @@ mu3 <- colMeans(treatment_3)
 cov1 <- cov(treatment_1)
 cov2 <- cov(treatment_2)
 cov3 <- cov(treatment_3)
+
+box_test <- function(df){
+  
+}
 
