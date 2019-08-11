@@ -103,7 +103,14 @@ a <- c(1,0)
 
 confidence_interval(table_6_1, a,0.05)
 
+a <- c(0,1)
+
+confidence_interval(table_6_1, a,0.05)
+
 draw_ellipse <- function(df, significance){
+## Function to draw confidence region
+## param df: two dimensional dataframe for which to construct confidence region
+## significance: significance level for which to construct confidence region
   
   #Retrieve paired differences
   p <- ncol(df)
@@ -132,24 +139,29 @@ draw_ellipse <- function(df, significance){
   sign_grid<-matrix(rep(0,ng),nrow=ng,ncol=1)
   
   for (i in 1:ng){
-    sign_grid[i,]<-abs((t(dbar - grid_data[i,])%*%solve(sd)%*%(dbar-grid_data[i,]))-crit) 
+    sign_grid[i,]<-sign((t(dbar - grid_data[i,])%*%solve(sd)%*%(dbar-grid_data[i,]))-crit) 
   }
   
   # Plotting the boundary of ellipse
+  plot(df[,1],df[,2],xlim=c(x_min,x_max),ylim=c(y_min,y_max),xlab="x",ylab="y",
+       col="red",pch=16,cex=1.25)
+  par(new=T)
+  contour(x,y,matrix(sign_grid,np),add=TRUE,drawlabels=FALSE,levels=0,lty=2,lwd=2,
+          col="black")
   
-  ellipse <- ggplot() + geom_point(aes(x=df[,1],y=df[,2],col='red')) + xlim(c(x_min,x_max))+
-    ylim(c(y_min,y_max))+xlab('x1')+ylab('x2')
+  mat<-cbind(sign_grid,grid_data)
   
-  ellipse <- ellipse + 
-    geom_contour(data=as.data.frame(sign_grid),mapping=aes(x=sign_grid[,1],y=y1,z=sign_grid,linetype=c('dashed')),lwd=2, colour='black') + 
-    stat_contour()
+  region<-matrix(mat[mat[,1]==-1],ncol=3)
   
-  print(ellipse)
+  # Plotting the points inside the ellipse
+  par(new=T)
+  plot(region[,2:3],xlim=c(x_min,x_max),ylim=c(y_min,y_max),col="red",xlab="x",
+       ylab="y",pch=".",main="Ellipse" )
 }
 
 paired_diff <- convert_to_paired_diff(table_6_1)
 d <- paired_diff$d
-significance <- 0.05
+significance <- 0.2
 
 draw_ellipse(d, significance)
 
@@ -192,52 +204,15 @@ table_6_2 <- as.data.frame(fread(file = here('assignment_1/T6-2.dat')))
 
 eq_of_treatments_in_rep_des(table_6_2, C, 0.05)
 
+treatment_1 <- matrix(c(6,5,8,4,7,7,9,6,9,9), nrow=5)
+treatment_2 <- matrix(c(3,1,2,3,6,3), nrow=3)
+treatment_3 <- matrix(c(2,5,3,2,3,1,1,3), nrow=4)
 
+mu1 <- colMeans(treatment_1)
+mu2 <- colMeans(treatment_2)
+mu3 <- colMeans(treatment_3)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-df <- table_6_2
-significance <- 0.05
-
-
-# Calc stats
-n <- nrow(df)
-q <- ncol(df)
-dbar <- colMeans(df)
-sd <- cov(df)
-t_squared <- n*t(C%*%dbar)%*%solve(C%*%sd%*%t(C))%*%C%*%dbar
-crit <- (n-1)*(q-1)/(n-q+1)*qf(1-significance,q-1,n-q+1)
-p_val <- 1-pf(t_squared, p, n-p)
-
-#Build up confidence intervals
-
-if(t_squared > crit){
-  print(paste0('T^2 = ', t_squared, ' > ',crit))
-  print('We therefore reject the null hypothesis H0:C*mu = 0 and determine that there is possibly treatment effects')
-}else{
-  print(paste0('T^2 = ', t_squared, ' < ',crit))
-  print('We therefore do not reject the null hypothesis H0:C*mu = 0 and determine that there is no treatment effects')
-}
-
-print(paste0('p-value = ', p_val))
-apply(C,1,function(c){
-  ci <- sqrt(crit*(t(c)%*%sd%*%c/n))
-  print(paste0('100(1-',significance,')% Confidence interval: (',c%*%dbar-ci,'; ',c%*%dbar+ci,')'))
-})
-
+cov1 <- cov(treatment_1)
+cov2 <- cov(treatment_2)
+cov3 <- cov(treatment_3)
 
