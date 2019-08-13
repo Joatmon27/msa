@@ -212,9 +212,27 @@ mu1 <- colMeans(treatment_1)
 mu2 <- colMeans(treatment_2)
 mu3 <- colMeans(treatment_3)
 
-cov1 <- cov(treatment_1)
-cov2 <- cov(treatment_2)
-cov3 <- cov(treatment_3)
+mu <- (mu1+mu2+mu3)/3
+
+est_treatment_effect_1 <- mu1-mu
+est_treatment_effect_2 <- mu2-mu
+est_treatment_effect_3 <- mu3-mu
+
+residual_1 <- treatment_1-mu1
+residual_2 <- treatment_2-mu2
+residual_3 <- treatment_3-mu3
+
+assertthat::are_equal(treatment_1, mu+est_treatment_effect_1+residual_1)
+assertthat::are_equal(treatment_2, mu+est_treatment_effect_2+residual_2)
+assertthat::are_equal(treatment_3, mu+est_treatment_effect_3+residual_3)
+
+B <- nrow(treatment_1)*(mu1-mu)%*%t(mu1-mu) + nrow(treatment_2)*(mu2-mu)%*%t(mu2-mu) + nrow(treatment_3)*(mu3-mu)%*%t(mu3-mu)
+
+W <- (t(treatment_1)-mu1)%*%t(t(treatment_1)-mu1) + (t(treatment_2)-mu2)%*%t(t(treatment_2)-mu2) + (t(treatment_3)-mu3)%*%t(t(treatment_3)-mu3)
+
+total <- (t(treatment_1)-mu)%*%t(t(treatment_1)-mu) + ((t(treatment_2)-mu)%*%t(t(treatment_2)-mu)) + ((t(treatment_3)-mu)%*%t(t(treatment_3)-mu))
+
+assertthat::are_equal(B+W, total)
 
 box_test <- function(df){
   
