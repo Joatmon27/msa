@@ -234,7 +234,65 @@ total <- (t(treatment_1)-mu)%*%t(t(treatment_1)-mu) + ((t(treatment_2)-mu)%*%t(t
 
 assertthat::are_equal(B+W, total)
 
-box_test <- function(df){
+box_test <- function(df, significance){
+  g <- nrow(unique(iris[,'Species']))
   
+  p <- ncol(iris[,-'Species'])
+  
+  for(i in 1:g){
+    iris_subset <- iris[iris$Species == i, -'Species']
+    
+    n <- nrow(iris_subset)
+    
+    S <- cov(iris_subset)
+    
+    if(i == 1){
+      S_pooled <- (n-1)*S
+      
+      u1 <- 1/(n-1)
+      
+      u2 <- n - 1
+      
+      M1 <- (n-1)*log(det(S))
+    }else{
+      S_pooled <- S_pooled + (n-1)*S
+      
+      u1 <- u1 + (1/(n-1))
+      
+      u2 <- u2 + (n - 1)
+      
+      M1 <- M1 + (n-1)*log(det(S))
+    }
+  }
+  
+  u3 <- (2*p*p+3*p-1)/(6*(p+1)*(g-1))
+  
+  u <- (u1-1/u2)*u3
+  
+  S_pooled <- 1/u2*S_pooled
+  
+  M <- u2*log(det(S_pooled))-M1
+  
+  C <- (1-u)*M
+  
+  df <- p*(p+1)*(g-1)/2
+  
+  crit <- qchisq(significance, df = df)
+  
+  
+  #Perform hypothesis test
+  if(C > crit){
+    print(paste0('C = ', C, ' > ',crit))
+    print('We therefore reject the null hypothesis H0:Sigma1 = Sigma2 = Sigma3 = Sigma4 = Sigma and determine that the covariances are possibly not equal')
+  }else{
+    print(paste0('C = ', C, ' < ',crit))
+    print('We therefore do not reject the null hypothesis H0:Sigma1 = Sigma2 = Sigma3 = Sigma4 = Sigma and determine that the covariances are equal')
+  }
 }
+
+iris <- fread(here('/assignment_1/T11-5.dat'), sep = ' ')
+
+colnames(iris) <- c('Sepal_Length', 'Sepal_Width','Petal_Length', 'Petal_Width','Species')
+
+box_test(iris, 0.05)
 
