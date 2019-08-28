@@ -1,0 +1,236 @@
+---
+title: "Assignment 3"
+author: "PW Janse van Rensburg"
+date: "7/31/2019"
+output:
+  html_document:
+    df_print: paged
+  pdf_document: default
+---
+
+```{r}
+library(data.table)
+library(knitr)
+library(kableExtra)
+```
+
+### Question 1
+
+```{r warnings = FALSE}
+data <- fread('data.csv')
+
+q1 <- function (data) 
+{
+  data<-as.matrix(data)
+  n <- nrow(data)
+  Z <- as.matrix(cbind(rep(1,n),data[,1:2]))
+  beta_hat <- solve(t(Z)%*%Z)%*%t(Z)%*%data[,3]
+  y_hat <- Z%*%beta_hat
+  hat_mat <- Z%*%solve(t(Z)%*%Z)%*%t(Z)
+  err <- data[,3]-y_hat
+  SSE <- t(err)%*%err
+  SSR <- t(y_hat-(mean(data[,3])*(rep(1,n))))%*%(y_hat-(mean(data[,3])*(rep(1,n))))
+  SST <- t(data[,3]-(mean(data[,3])*(rep(1,n))))%*%(data[,3]-(mean(data[,3])*(rep(1,n))))
+  R_sq <- SSR/SST
+  s_sq <- SSE/(n-ncol(data[,1:2])-1)
+  list("beta_hat"=beta_hat,"y_hat"=y_hat,"hat_matrix"=hat_mat,"SSE"=SSE,"SSR"=SSR,"SST"=SST,
+       "R_squared"=R_sq,"sigma_squared"=s_sq)
+}
+
+results <- q1(data)
+
+kable_styling(kable(results['beta_hat']))
+
+kable_styling(kable(results['y_hat']))
+
+kable_styling(kable(results['hat_matrix']))
+
+kable_styling(kable(results['SSE']))
+
+kable_styling(kable(results['SSR']))
+
+kable_styling(kable(results['SST']))
+
+kable_styling(kable(results['R_squared']))
+
+kable_styling(kable(results['sigma_squared']))
+```
+
+### Question 2
+
+```{r}
+q2 <- function (data,alpha) 
+{
+  data <- as.matrix(data)
+  r <-1
+  n <-nrow(data)
+  Z <-as.matrix(cbind(rep(1,n),data[,1]))
+  B.hat <-solve(t(Z)%*%Z)%*%t(Z)%*%data[,3]
+  y.hat <-Z%*%B.hat
+  err <-data[,3]-y.hat
+  SSE <-t(err)%*%err
+  s.sq <-SSE/(n-r-1)
+  value <-t(Z)%*%Z
+  F <-qf(alpha,df1=r+1,df2=(n-r-1),lower=FALSE)
+  xmin <-B.hat[1]-15
+  xmax<-B.hat[1]+15
+  ymin <-B.hat[2]-1
+  ymax<-B.hat[2]+1
+  x1 <-seq(xmin,xmax,length=100)
+  x2 <-seq(ymin,ymax,length=100)
+  grid.data <-as.matrix(expand.grid(x1,x2))
+  ng <-nrow(grid.data)
+  np <-length(x1)
+  signgrid <-matrix(rep(0,ng),nrow=ng,ncol=1)
+  for (i in 1:ng){
+    signgrid[i,]<-sign((t(grid.data[i,]-B.hat)%*%value%*%(grid.data[i,]-B.hat))-(F*(r+1)*s.sq)) 
+  }
+  plot(x1,x2,xlim=c(xmin,xmax),ylim=c(ymin,ymax),xlab="beta 0",ylab="beta 1",col="white",pch=16,cex=1.25)
+  par(new=T)
+  contour(x1,x2,matrix(signgrid,np),add=TRUE,drawlabels=FALSE,levels=0,lty=2,lwd=2,col="black")
+  mat <-cbind(signgrid,grid.data)
+    region<-matrix(mat[mat[,1]==-1],ncol=3)
+    par(new=T)
+    plot(region[,2:3],xlim=c(xmin,xmax),ylim=c(ymin,ymax),col="blue",xlab="beta 0",ylab="beta 1",pch=".",main="Ellipse" )
+}
+
+q2(data, 0.05)
+
+```
+
+### Question 3
+
+```{r}
+q3 <- function (data,alpha) 
+{
+  data <- as.matrix(data)
+  n <- nrow(data)
+  r <- 2
+  F <- qf(alpha,df1=r+1,df2=(n-r-1),lower=FALSE)
+  T <- qt(alpha/2,df=(n-r-1),lower.tail=FALSE)
+  T2 <- qt(alpha/(2*r),df=(n-r-1),lower.tail=FALSE)
+  Z <- as.matrix(cbind(rep(1,n),data[,1:2]))
+  beta_hat <- solve(t(Z)%*%Z)%*%t(Z)%*%data[,3]
+  y_hat <- Z%*%beta_hat
+  err <- data[,3]-y_hat
+  SSE <- t(err)%*%err
+  s_sq <- SSE/(n-r-1)
+  check <- as.matrix(solve(t(Z)%*%Z))
+  sq_var <- sqrt(diag(solve(t(Z)%*%Z)*rep(s_sq,9)))
+  Fcrit <- (r+1)*F
+  
+  #SIMULTANEOUS CONFIDENCE INTERVALS
+  UL1 <- beta_hat+(sqrt(Fcrit)*sq_var)
+  LL1 <- beta_hat-(sqrt(Fcrit)*sq_var)
+  
+  #ONE AT A TIME CONFIDENCE INTERVALS
+  UL2 <- beta_hat+((T)*sq_var)
+  LL2 <- beta_hat-((T)*sq_var)
+  
+  #BONFERRONI CONFIDENCE INTERVALS
+  UL3 <- beta_hat+((T2)*sq_var)
+  LL3 <- beta_hat-((T2)*sq_var)
+  list("Simultaneous confidence intervals"=cbind(LL1,UL1),"One at a time confidence intervals"=cbind(LL2,UL2),"Bonferroni confidence intervals"=cbind(LL3,UL3))
+}
+
+results <- q3(data, 0.05)
+
+kable_styling(kable(results['Simultaneous confidence intervals']))
+
+kable_styling(kable(results['One at a time confidence intervals']))
+
+kable_styling(kable(results['Bonferroni confidence intervals']))
+```
+
+### Question 4
+```{r}
+q4 <- function (data ,  alpha = 0.05)
+{
+  data <- as.matrix (data)
+  n <- nrow (data)
+  p <- ncol (data)
+  r <- ncol(data)
+  low <- matrix ( rep ( 0, n), ncol =1 , nrow = n)
+  high <- matrix ( rep ( 0, n), ncol =1 , nrow = n)
+  y <- matrix (data[, p], ncol = 1)
+  ybar <- mean (y)
+  J_vec <- matrix (rep(1,n), ncol =1)
+  z <-  rep (1,n)
+  Z <- cbind(z ,data[, 1:(p-1), drop = FALSE])
+  Z <- as.matrix(Z)
+  ZZ_inv<- solve (t(Z)%*%Z)
+  Bhat <- as.matrix(ZZ_inv%*%t(Z)%*%y)
+  yhat <- Z%*%Bhat
+  H <- Z%*%ZZ_inv%*%t(Z)
+  e <- y - Z%*%Bhat
+  SSE <- t(e)%*%e
+  SSR <- t(yhat - ybar*J_vec)%*%(yhat - ybar*J_vec)
+  SST <- t(y - ybar*J_vec)%*%(y - ybar*J_vec)
+  R2 <- SSR/SST
+  s2 <- SSE/(n-r-1)
+  z0 <- as.matrix(Z[, , drop = FALSE])
+  for (i in 1:n){
+    low[i,] <- t(z0[i,])%*%Bhat - qt((alpha)/2, n-r-1 )*sqrt(s2*(t(z0[i,])%*%ZZ_inv%*%(z0[i,])))
+    high[i,] <- t(z0[i,])%*%Bhat + qt((alpha)/2, n-r-1 )*sqrt(s2*(t(z0[i,])%*%ZZ_inv%*%(z0[i,])))}
+  ConfInt <- cbind(low, high)
+  p <- cbind ( data[,2] , data[,1] ,low , high)
+  b <- p[order(p[,2]), ]
+  plot( b[,2], b[,1], xlab = "z2", ylab = "Y", main = "95% Confidence Interval")
+  lines(b[,2], b[,3], col = "blue")
+  lines(b[,2], b[,4], col = "blue")
+  list (ConfInt = ConfInt, b=b )
+}
+
+results <- q4(data[,2:3], 0.05)
+
+kable_styling(kable(results['ConfInt']))
+
+kable_styling(kable(results['b']))
+
+```
+
+### Question 5
+```{r}
+q5 <- function (data,alpha){
+  data <- as.matrix (data)
+  n <- nrow (data)
+  p <- ncol (data)
+  r <- ncol(data)
+  low <- matrix ( rep( 0, n), ncol =1 , nrow = n)
+  high <- matrix ( rep( 0, n), ncol =1 , nrow = n)
+  y <- matrix (data[, p], ncol = 1)
+  ybar <- mean (y)
+  J_vec <- matrix (rep( 1, n ), ncol =1)
+  z <-  rep (1, n)
+  Z <- cbind( z , data[, 1:(p-1), drop = FALSE])
+  Z <- as.matrix(Z)
+  ZZ_inv<- solve (t(Z)%*%Z)
+  Bhat <- as.matrix(ZZ_inv%*%t(Z)%*%y)
+  yhat <- Z%*%Bhat
+  H <- Z%*%ZZ_inv%*%t(Z)
+  e <- y - Z%*%Bhat
+  SSE <- t(e)%*%e
+  SSR <- t(yhat - ybar*J_vec)%*%(yhat - ybar*J_vec)
+  SST <- t(y - ybar*J_vec)%*%(y - ybar*J_vec)
+  R2 <- SSR/SST
+  s2 <- SSE/(n-r-1)
+  z0 <- as.matrix(Z[, , drop = FALSE])
+  for ( i in 1:n){
+    low[i,] <- t(z0[i,])%*%Bhat - qt((alpha)/2, n-r-1 )*sqrt(s2*(1+t(z0[i,])%*%ZZ_inv%*%(z0[i,])))
+    high[i,] <- t(z0[i,])%*%Bhat + qt((alpha)/2, n-r-1 )*sqrt(s2*(1+ t(z0[i,])%*%ZZ_inv%*%(z0[i,])))}
+  ConfInt <- cbind ( low, high )
+  p <- cbind (data[,2] ,data[,1] ,low , high)
+  b <- p[order(p[,2]), ]
+  plot( b[,2], b[,1], xlab = "z2", ylab = "Y", main = "Plot of data (z2,Y) with 95% Pred Int ")
+  lines(b[,2], b[,3], col = "red")
+  lines(b[,2], b[,4], col = "red")
+  list (ConfInt = ConfInt, b=b )
+}
+
+
+results <- q5(data[,2:3], 0.05)
+
+kable_styling(kable(results['ConfInt']))
+
+kable_styling(kable(results['b']))
+```
