@@ -1,0 +1,382 @@
+\documentclass[]{article}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+\else % if luatex or xelatex
+  \ifxetex
+    \usepackage{mathspec}
+  \else
+    \usepackage{fontspec}
+  \fi
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+\fi
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+% use microtype if available
+\IfFileExists{microtype.sty}{%
+\usepackage{microtype}
+\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\usepackage[margin=1in]{geometry}
+\usepackage{hyperref}
+\hypersetup{unicode=true,
+            pdftitle={R Notebook},
+            pdfborder={0 0 0},
+            breaklinks=true}
+\urlstyle{same}  % don't use monospace font for urls
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+\IfFileExists{parskip.sty}{%
+\usepackage{parskip}
+}{% else
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{0}
+% Redefines (sub)paragraphs to behave more like sections
+\ifx\paragraph\undefined\else
+\let\oldparagraph\paragraph
+\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+\let\oldsubparagraph\subparagraph
+\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+
+%%% Use protect on footnotes to avoid problems with footnotes in titles
+\let\rmarkdownfootnote\footnote%
+\def\footnote{\protect\rmarkdownfootnote}
+
+%%% Change title format to be more compact
+\usepackage{titling}
+
+% Create subtitle command for use in maketitle
+\providecommand{\subtitle}[1]{
+  \posttitle{
+    \begin{center}\large#1\end{center}
+    }
+}
+
+\setlength{\droptitle}{-2em}
+
+  \title{R Notebook}
+    \pretitle{\vspace{\droptitle}\centering\huge}
+  \posttitle{\par}
+    \author{}
+    \preauthor{}\postauthor{}
+    \date{}
+    \predate{}\postdate{}
+  
+
+\begin{document}
+\maketitle
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(data.table)}
+\KeywordTok{library}\NormalTok{(knitr)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{data <-}\StringTok{ }\KeywordTok{fread}\NormalTok{(}\StringTok{'data.csv'}\NormalTok{)}
+
+\NormalTok{q1 <-}\StringTok{ }\ControlFlowTok{function}\NormalTok{ (data) }
+\NormalTok{\{}
+\NormalTok{  data<-}\KeywordTok{as.matrix}\NormalTok{(data)}
+\NormalTok{  n <-}\StringTok{ }\KeywordTok{nrow}\NormalTok{(data)}
+\NormalTok{  Z <-}\StringTok{ }\KeywordTok{as.matrix}\NormalTok{(}\KeywordTok{cbind}\NormalTok{(}\KeywordTok{rep}\NormalTok{(}\DecValTok{1}\NormalTok{,n),data[,}\DecValTok{1}\OperatorTok{:}\DecValTok{2}\NormalTok{]))}
+\NormalTok{  beta_hat <-}\StringTok{ }\KeywordTok{solve}\NormalTok{(}\KeywordTok{t}\NormalTok{(Z)}\OperatorTok{%*%}\NormalTok{Z)}\OperatorTok{%*%}\KeywordTok{t}\NormalTok{(Z)}\OperatorTok{%*%}\NormalTok{data[,}\DecValTok{3}\NormalTok{]}
+\NormalTok{  y_hat <-}\StringTok{ }\NormalTok{Z}\OperatorTok{%*%}\NormalTok{beta_hat}
+\NormalTok{  hat_mat <-}\StringTok{ }\NormalTok{Z}\OperatorTok{%*%}\KeywordTok{solve}\NormalTok{(}\KeywordTok{t}\NormalTok{(Z)}\OperatorTok{%*%}\NormalTok{Z)}\OperatorTok{%*%}\KeywordTok{t}\NormalTok{(Z)}
+\NormalTok{  err <-}\StringTok{ }\NormalTok{data[,}\DecValTok{3}\NormalTok{]}\OperatorTok{-}\NormalTok{y_hat}
+\NormalTok{  SSE <-}\StringTok{ }\KeywordTok{t}\NormalTok{(err)}\OperatorTok{%*%}\NormalTok{err}
+\NormalTok{  SSR <-}\StringTok{ }\KeywordTok{t}\NormalTok{(y_hat}\OperatorTok{-}\NormalTok{(}\KeywordTok{mean}\NormalTok{(data[,}\DecValTok{3}\NormalTok{])}\OperatorTok{*}\NormalTok{(}\KeywordTok{rep}\NormalTok{(}\DecValTok{1}\NormalTok{,n))))}\OperatorTok{%*%}\NormalTok{(y_hat}\OperatorTok{-}\NormalTok{(}\KeywordTok{mean}\NormalTok{(data[,}\DecValTok{3}\NormalTok{])}\OperatorTok{*}\NormalTok{(}\KeywordTok{rep}\NormalTok{(}\DecValTok{1}\NormalTok{,n))))}
+\NormalTok{  SST <-}\StringTok{ }\KeywordTok{t}\NormalTok{(data[,}\DecValTok{3}\NormalTok{]}\OperatorTok{-}\NormalTok{(}\KeywordTok{mean}\NormalTok{(data[,}\DecValTok{3}\NormalTok{])}\OperatorTok{*}\NormalTok{(}\KeywordTok{rep}\NormalTok{(}\DecValTok{1}\NormalTok{,n))))}\OperatorTok{%*%}\NormalTok{(data[,}\DecValTok{3}\NormalTok{]}\OperatorTok{-}\NormalTok{(}\KeywordTok{mean}\NormalTok{(data[,}\DecValTok{3}\NormalTok{])}\OperatorTok{*}\NormalTok{(}\KeywordTok{rep}\NormalTok{(}\DecValTok{1}\NormalTok{,n))))}
+\NormalTok{  R_sq <-}\StringTok{ }\NormalTok{SSR}\OperatorTok{/}\NormalTok{SST}
+\NormalTok{  s_sq <-}\StringTok{ }\NormalTok{SSE}\OperatorTok{/}\NormalTok{(n}\OperatorTok{-}\KeywordTok{ncol}\NormalTok{(data[,}\DecValTok{1}\OperatorTok{:}\DecValTok{2}\NormalTok{])}\OperatorTok{-}\DecValTok{1}\NormalTok{)}
+  \KeywordTok{list}\NormalTok{(}\StringTok{"beta_hat"}\NormalTok{=beta_hat,}\StringTok{"y_hat"}\NormalTok{=y_hat,}\StringTok{"hat_matrix"}\NormalTok{=hat_mat,}\StringTok{"SSE"}\NormalTok{=SSE,}\StringTok{"SSR"}\NormalTok{=SSR,}\StringTok{"SST"}\NormalTok{=SST,}
+       \StringTok{"R_squared"}\NormalTok{=R_sq,}\StringTok{"sigma_squared"}\NormalTok{=s_sq)}
+\NormalTok{\}}
+
+\NormalTok{results <-}\StringTok{ }\KeywordTok{q1}\NormalTok{(data)}
+
+\KeywordTok{print}\NormalTok{(}\KeywordTok{kable}\NormalTok{(results[}\StringTok{'beta_hat'}\NormalTok{]))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## \begin{table}
+## 
+## \centering
+## \begin{tabular}{l|r}
+## \hline
+##  & 30.9665663\\
+## \hline
+## V1 & 2.6343996\\
+## \hline
+## V2 & 0.0451839\\
+## \hline
+## \end{tabular}
+## \end{table}
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{print}\NormalTok{(}\KeywordTok{kable}\NormalTok{(results[}\StringTok{'y_hat'}\NormalTok{]))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## \begin{table}
+## 
+## \centering
+## \begin{tabular}{r}
+## \hline
+## 73.88826\\
+## \hline
+## 73.89217\\
+## \hline
+## 76.73058\\
+## \hline
+## 71.29299\\
+## \hline
+## 72.23250\\
+## \hline
+## 79.47633\\
+## \hline
+## 71.83274\\
+## \hline
+## 72.85257\\
+## \hline
+## 73.68953\\
+## \hline
+## 70.07060\\
+## \hline
+## 73.78526\\
+## \hline
+## 71.87195\\
+## \hline
+## 72.86016\\
+## \hline
+## 83.08179\\
+## \hline
+## 73.58944\\
+## \hline
+## 102.87717\\
+## \hline
+## 84.25149\\
+## \hline
+## 74.17284\\
+## \hline
+## 81.53951\\
+## \hline
+## 77.01210\\
+## \hline
+## \end{tabular}
+## \end{table}
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{print}\NormalTok{(}\KeywordTok{kable}\NormalTok{(results[}\StringTok{'hat_matrix'}\NormalTok{]))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## \begin{table}
+## 
+## \centering
+## \begin{tabular}{r|r|r|r|r|r|r|r|r|r|r|r|r|r|r|r|r|r|r|r}
+## \hline
+## 0.1359236 & -0.0206860 & -0.0026881 & 0.0914340 & -0.0537618 & 0.1050650 & 0.0250522 & 0.1056410 & 0.1536583 & 0.1008208 & 0.0061104 & -0.0513049 & 0.0455277 & 0.0804955 & 0.1347896 & -0.0649690 & 0.0700586 & 0.0740989 & 0.0714545 & -0.0067201\\
+## \hline
+## -0.0206860 & 0.1328750 & 0.1007481 & 0.0361803 & 0.1737762 & -0.0189256 & 0.0985254 & 0.0142935 & -0.0370641 & 0.0332097 & 0.1071422 & 0.1732057 & 0.0732056 & -0.0132206 & -0.0180497 & 0.0284661 & -0.0089515 & 0.0384917 & 0.0035118 & 0.1032663\\
+## \hline
+## -0.0026881 & 0.1007481 & 0.0845252 & 0.0306616 & 0.1251299 & 0.0091596 & 0.0736830 & 0.0188957 & -0.0140985 & 0.0263284 & 0.0832122 & 0.1240577 & 0.0585895 & 0.0198814 & -0.0014826 & 0.0857284 & 0.0249885 & 0.0377131 & 0.0282086 & 0.0867584\\
+## \hline
+## 0.0914340 & 0.0361803 & 0.0306616 & 0.0865923 & 0.0314529 & 0.0571876 & 0.0609224 & 0.0850830 & 0.0985199 & 0.0950136 & 0.0460785 & 0.0338268 & 0.0638489 & 0.0334482 & 0.0922832 & -0.1006177 & 0.0248768 & 0.0684382 & 0.0367072 & 0.0280625\\
+## \hline
+## -0.0537618 & 0.1737762 & 0.1251299 & 0.0314529 & 0.2349911 & -0.0532052 & 0.1236347 & -0.0015506 & -0.0779572 & 0.0275000 & 0.1356858 & 0.2342781 & 0.0857398 & -0.0460756 & -0.0497458 & 0.0084251 & -0.0401794 & 0.0338204 & -0.0207161 & 0.1287578\\
+## \hline
+## 0.1050650 & -0.0189256 & 0.0091596 & 0.0571876 & -0.0532052 & 0.1078649 & 0.0072545 & 0.0760383 & 0.1181395 & 0.0586628 & 0.0017717 & -0.0530169 & 0.0284752 & 0.1059820 & 0.1027106 & 0.0872758 & 0.1034185 & 0.0574967 & 0.0913063 & 0.0073390\\
+## \hline
+## 0.0250522 & 0.0985254 & 0.0736830 & 0.0609224 & 0.1236347 & 0.0072545 & 0.0889570 & 0.0452462 & 0.0178774 & 0.0635784 & 0.0865676 & 0.1245643 & 0.0734132 & -0.0020421 & 0.0273105 & -0.0481246 & -0.0039010 & 0.0524222 & 0.0111097 & 0.0739490\\
+## \hline
+## 0.1056410 & 0.0142935 & 0.0188957 & 0.0850830 & -0.0015506 & 0.0760383 & 0.0452462 & 0.0901301 & 0.1163971 & 0.0930963 & 0.0301439 & 0.0006311 & 0.0550545 & 0.0542210 & 0.1056001 & -0.0717283 & 0.0457047 & 0.0689919 & 0.0521509 & 0.0159595\\
+## \hline
+## 0.1536583 & -0.0370641 & -0.0140985 & 0.0985199 & -0.0779572 & 0.1181395 & 0.0178774 & 0.1163971 & 0.1751829 & 0.1095005 & -0.0044702 & -0.0750980 & 0.0431921 & 0.0895482 & 0.1521670 & -0.0802994 & 0.0772694 & 0.0784713 & 0.0779688 & -0.0189049\\
+## \hline
+## 0.1008208 & 0.0332097 & 0.0263284 & 0.0950136 & 0.0275000 & 0.0586628 & 0.0635784 & 0.0930963 & 0.1095005 & 0.1053736 & 0.0453264 & 0.0304212 & 0.0671129 & 0.0294512 & 0.1018735 & -0.1354927 & 0.0189100 & 0.0726692 & 0.0335089 & 0.0231354\\
+## \hline
+## 0.0061104 & 0.1071422 & 0.0832122 & 0.0460785 & 0.1356858 & 0.0017717 & 0.0865676 & 0.0301439 & -0.0044702 & 0.0453264 & 0.0903164 & 0.1356651 & 0.0688977 & 0.0019788 & 0.0081388 & 0.0099343 & 0.0036370 & 0.0447665 & 0.0145050 & 0.0845921\\
+## \hline
+## -0.0513049 & 0.1732057 & 0.1240577 & 0.0338268 & 0.2342781 & -0.0530169 & 0.1245643 & 0.0006311 & -0.0750980 & 0.0304212 & 0.1356651 & 0.2337206 & 0.0867576 & -0.0474411 & -0.0472213 & -0.0016755 & -0.0420967 & 0.0349975 & -0.0217947 & 0.1275235\\
+## \hline
+## 0.0455277 & 0.0732056 & 0.0585895 & 0.0638489 & 0.0857398 & 0.0284752 & 0.0734132 & 0.0550545 & 0.0431921 & 0.0671129 & 0.0688977 & 0.0867576 & 0.0656539 & 0.0182967 & 0.0469319 & -0.0357183 & 0.0154306 & 0.0553140 & 0.0261079 & 0.0581686\\
+## \hline
+## 0.0804955 & -0.0132206 & 0.0198814 & 0.0334482 & -0.0460756 & 0.1059820 & -0.0020421 & 0.0542210 & 0.0895482 & 0.0294512 & 0.0019788 & -0.0474411 & 0.0182967 & 0.1196369 & 0.0774659 & 0.1882820 & 0.1225909 & 0.0457257 & 0.1020927 & 0.0196824\\
+## \hline
+## 0.1347896 & -0.0180497 & -0.0014826 & 0.0922832 & -0.0497458 & 0.1027106 & 0.0273105 & 0.1056001 & 0.1521670 & 0.1018735 & 0.0081388 & -0.0472213 & 0.0469319 & 0.0774659 & 0.1337878 & -0.0714508 & 0.0668694 & 0.0743538 & 0.0691846 & -0.0055164\\
+## \hline
+## -0.0649690 & 0.0284661 & 0.0857284 & -0.1006177 & 0.0084251 & 0.0872758 & -0.0481246 & -0.0717283 & -0.0802994 & -0.1354927 & 0.0099343 & -0.0016755 & -0.0357183 & 0.1882820 & -0.0714508 & 0.7491452 & 0.2225208 & -0.0213041 & 0.1567280 & 0.0948747\\
+## \hline
+## 0.0700586 & -0.0089515 & 0.0249885 & 0.0248768 & -0.0401794 & 0.1034185 & -0.0039010 & 0.0457047 & 0.0772694 & 0.0189100 & 0.0036370 & -0.0420967 & 0.0154306 & 0.1225909 & 0.0668694 & 0.2225208 & 0.1275663 & 0.0413463 & 0.1045219 & 0.0254187\\
+## \hline
+## 0.0740989 & 0.0384917 & 0.0377131 & 0.0684382 & 0.0338204 & 0.0574967 & 0.0524222 & 0.0689919 & 0.0784713 & 0.0726692 & 0.0447665 & 0.0349975 & 0.0553140 & 0.0457257 & 0.0743538 & -0.0213041 & 0.0413463 & 0.0595566 & 0.0463166 & 0.0363136\\
+## \hline
+## 0.0714545 & 0.0035118 & 0.0282086 & 0.0367072 & -0.0207161 & 0.0913063 & 0.0111097 & 0.0521509 & 0.0779688 & 0.0335089 & 0.0145050 & -0.0217947 & 0.0261079 & 0.1020927 & 0.0691846 & 0.1567280 & 0.1045219 & 0.0463166 & 0.0889939 & 0.0281335\\
+## \hline
+## -0.0067201 & 0.1032663 & 0.0867584 & 0.0280625 & 0.1287578 & 0.0073390 & 0.0739490 & 0.0159595 & -0.0189049 & 0.0231354 & 0.0845921 & 0.1275235 & 0.0581686 & 0.0196824 & -0.0055164 & 0.0948747 & 0.0254187 & 0.0363136 & 0.0281335 & 0.0892066\\
+## \hline
+## \end{tabular}
+## \end{table}
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{print}\NormalTok{(}\KeywordTok{kable}\NormalTok{(results[}\StringTok{'SSE'}\NormalTok{]))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## \begin{table}
+## 
+## \centering
+## \begin{tabular}{r}
+## \hline
+## 204.9949\\
+## \hline
+## \end{tabular}
+## \end{table}
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{print}\NormalTok{(}\KeywordTok{kable}\NormalTok{(results[}\StringTok{'SSR'}\NormalTok{]))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## \begin{table}
+## 
+## \centering
+## \begin{tabular}{r}
+## \hline
+## 1032.875\\
+## \hline
+## \end{tabular}
+## \end{table}
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{print}\NormalTok{(}\KeywordTok{kable}\NormalTok{(results[}\StringTok{'SST'}\NormalTok{]))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## \begin{table}
+## 
+## \centering
+## \begin{tabular}{r}
+## \hline
+## 1237.87\\
+## \hline
+## \end{tabular}
+## \end{table}
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{print}\NormalTok{(}\KeywordTok{kable}\NormalTok{(results[}\StringTok{'R_squared'}\NormalTok{]))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## \begin{table}
+## 
+## \centering
+## \begin{tabular}{r}
+## \hline
+## 0.834397\\
+## \hline
+## \end{tabular}
+## \end{table}
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{print}\NormalTok{(}\KeywordTok{kable}\NormalTok{(results[}\StringTok{'sigma_squared'}\NormalTok{]))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## \begin{table}
+## 
+## \centering
+## \begin{tabular}{r}
+## \hline
+## 12.05853\\
+## \hline
+## \end{tabular}
+## \end{table}
+\end{verbatim}
+
+
+\end{document}
